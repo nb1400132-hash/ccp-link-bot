@@ -16,6 +16,7 @@ class FlagCommand(commands.Cog):
 
     @app_commands.command(name="flag", description="Flag a user to prevent them from accessing links")
     @app_commands.describe(username="User ID, mention, or username of the person to flag")
+    @app_commands.default_permissions(administrator=True)
     async def flag(
         self,
         interaction: discord.Interaction,

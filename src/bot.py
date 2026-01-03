@@ -22,6 +22,7 @@ EXTENSIONS = [
     "commands.cd",
     "commands.flag",
     "commands.unflag",
+    "commands.filter",
     "events.link_filter"
 ]
 

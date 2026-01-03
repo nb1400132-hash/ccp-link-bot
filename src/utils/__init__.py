@@ -8,7 +8,9 @@ from .data import (
     is_user_flagged,
     flag_user,
     unflag_user,
-    get_flagged_users
+    get_flagged_users,
+    get_filter_enabled,
+    set_filter_enabled
 )
 
 from .embeds import (
@@ -35,6 +37,8 @@ __all__ = [
     "flag_user",
     "unflag_user",
     "get_flagged_users",
+    "get_filter_enabled",
+    "set_filter_enabled",
     "Colors",
     "create_link_embed",
     "create_access_embed",

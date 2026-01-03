@@ -97,3 +97,17 @@ def get_flagged_users(guild_id: int) -> list:
     data = load_data()
     guild_settings = data.get("guild_settings", {}).get(str(guild_id), {})
     return guild_settings.get("flagged_users", [])
+
+def get_filter_enabled(guild_id: int) -> bool:
+    data = load_data()
+    guild_settings = data.get("guild_settings", {}).get(str(guild_id), {})
+    return guild_settings.get("filter_enabled", True)
+
+def set_filter_enabled(guild_id: int, enabled: bool) -> None:
+    data = load_data()
+    if "guild_settings" not in data:
+        data["guild_settings"] = {}
+    if str(guild_id) not in data["guild_settings"]:
+        data["guild_settings"][str(guild_id)] = {}
+    data["guild_settings"][str(guild_id)]["filter_enabled"] = enabled
+    save_data(data)

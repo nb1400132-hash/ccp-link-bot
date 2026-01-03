@@ -7,6 +7,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.embeds import create_error_embed
+from utils.data import get_filter_enabled
 
 BLOCKED_PATTERNS = [
     r'(?:https?://)?(?:www\.)?zoom\.us/[^\s]*',
@@ -65,6 +66,9 @@ class LinkFilter(commands.Cog):
             return
         
         if not message.guild:
+            return
+        
+        if not get_filter_enabled(message.guild.id):
             return
         
         if self.contains_blocked_link(message.content):

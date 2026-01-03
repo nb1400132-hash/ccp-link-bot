@@ -15,6 +15,7 @@ class LinkLogCommand(commands.Cog):
 
     @app_commands.command(name="linklog", description="Set the channel for logging link access")
     @app_commands.describe(channelhere="The channel to send access logs to")
+    @app_commands.default_permissions(administrator=True)
     async def linklog(
         self,
         interaction: discord.Interaction,

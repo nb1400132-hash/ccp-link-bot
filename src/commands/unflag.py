@@ -16,6 +16,7 @@ class UnflagCommand(commands.Cog):
 
     @app_commands.command(name="unflag", description="Remove a user from the flagged list")
     @app_commands.describe(username="User ID, mention, or username of the person to unflag")
+    @app_commands.default_permissions(administrator=True)
     async def unflag(
         self,
         interaction: discord.Interaction,

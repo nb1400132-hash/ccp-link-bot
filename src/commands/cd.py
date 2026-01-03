@@ -16,6 +16,7 @@ class CooldownCommand(commands.Cog):
 
     @app_commands.command(name="cd", description="Set cooldown time for link access")
     @app_commands.describe(time="Cooldown time (e.g., 30s for seconds, 2m for minutes). Max 4 minutes")
+    @app_commands.default_permissions(administrator=True)
     async def cd(
         self,
         interaction: discord.Interaction,
