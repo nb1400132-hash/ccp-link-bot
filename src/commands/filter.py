@@ -1,12 +1,8 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import sys
-import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from utils.data import get_filter_enabled, set_filter_enabled
+from utils.data import set_filter_enabled
 from utils.embeds import create_success_embed
 
 class FilterToggleCommand(commands.Cog):

@@ -3,10 +3,6 @@ from discord import app_commands
 from discord.ext import commands
 from datetime import datetime
 import uuid
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.data import get_linklog_channel
 from utils.embeds import create_link_embed, create_log_embed, create_success_embed
@@ -44,23 +40,26 @@ class LinkCommand(commands.Cog):
         
         thread_id = None
         
-        linklog_channel_id = get_linklog_channel(interaction.guild_id)
-        if linklog_channel_id:
-            log_channel = interaction.client.get_channel(linklog_channel_id)
-            if log_channel:
-                log_embed = create_log_embed(
-                    link=linkhere,
-                    password=password,
-                    ask_username=askusername,
-                    author=interaction.user
-                )
-                
-                log_message = await log_channel.send(embed=log_embed)
-                
-                thread = await log_message.create_thread(
-                    name=f"Access Log - {datetime.now().strftime('%m/%d %H:%M')}"
-                )
-                thread_id = str(thread.id)
+        try:
+            linklog_channel_id = get_linklog_channel(interaction.guild_id)
+            if linklog_channel_id:
+                log_channel = interaction.client.get_channel(linklog_channel_id)
+                if log_channel:
+                    log_embed = create_log_embed(
+                        link=linkhere,
+                        password=password,
+                        ask_username=askusername,
+                        author=interaction.user
+                    )
+                    
+                    log_message = await log_channel.send(embed=log_embed)
+                    
+                    thread = await log_message.create_thread(
+                        name=f"Access Log - {datetime.now().strftime('%m/%d %H:%M')}"
+                    )
+                    thread_id = str(thread.id)
+        except Exception as e:
+            print(f"Linklog error: {e}")
         
         public_embed = create_link_embed(
             author_name=interaction.user.name,

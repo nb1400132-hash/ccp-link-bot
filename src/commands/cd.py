@@ -3,10 +3,6 @@ from discord import app_commands
 from discord.ext import commands
 import re
 import asyncio
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.embeds import create_error_embed
 
@@ -67,13 +63,19 @@ class CooldownCommand(commands.Cog):
             
             if remaining > 0:
                 embed = self._create_countdown_embed(remaining)
-                await message.edit(embed=embed)
+                try:
+                    await message.edit(embed=embed)
+                except Exception:
+                    break
         
         final_embed = discord.Embed(
             title="🇮🇱 !! THUG !! 🇮🇱",
             color=0x5865F2
         )
-        await message.edit(embed=final_embed)
+        try:
+            await message.edit(embed=final_embed)
+        except Exception:
+            pass
 
     def _create_countdown_embed(self, seconds: int) -> discord.Embed:
         minutes = seconds // 60

@@ -2,10 +2,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import re
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.data import unflag_user
 from utils.embeds import create_success_embed, create_error_embed
@@ -45,7 +41,7 @@ class UnflagCommand(commands.Cog):
         try:
             user = await interaction.client.fetch_user(user_id)
             user_display = f"**{user.name}** (`{user_id}`)"
-        except:
+        except Exception:
             user_display = f"`{user_id}`"
         
         embed = create_success_embed(

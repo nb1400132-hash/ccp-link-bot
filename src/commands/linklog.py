@@ -1,10 +1,6 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.data import set_linklog_channel
 from utils.embeds import create_success_embed

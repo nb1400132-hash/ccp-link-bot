@@ -1,10 +1,6 @@
 import discord
 from discord.ext import commands
 import re
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.embeds import create_error_embed
 from utils.data import get_filter_enabled
@@ -20,7 +16,6 @@ BLOCKED_PATTERNS = [
     r'(?:https?://)?discord\.gg/[^\s]+',
     r'(?:https?://)?(?:www\.)?discord\.com/invite/[^\s]+',
     r'(?:https?://)?(?:www\.)?discordapp\.com/invite/[^\s]+',
-    r'(?:https?://)?(?:www\.)?discord\.com/channels/[^\s]*',
     r'(?:https?://)?(?:canary\.)?discord\.com/invite/[^\s]+',
     r'(?:https?://)?(?:ptb\.)?discord\.com/invite/[^\s]+',
     
@@ -91,6 +86,8 @@ class LinkFilter(commands.Cog):
                 pass
             except discord.HTTPException:
                 pass
+            except Exception as e:
+                print(f"Filter error: {e}")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(LinkFilter(bot))

@@ -1,10 +1,6 @@
 import discord
 from discord.ui import Button, View, Modal, TextInput
 from typing import Optional
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.data import is_user_flagged, get_linklog_channel
 from utils.embeds import (
@@ -46,18 +42,21 @@ class UsernameModal(Modal):
         if not self.thread_id:
             return
         
-        channel_id = get_linklog_channel(interaction.guild_id)
-        if not channel_id:
-            return
-        
-        channel = interaction.client.get_channel(channel_id)
-        if not channel:
-            return
-        
-        thread = channel.get_thread(int(self.thread_id))
-        if thread:
-            embed = create_access_log_embed(interaction.user, entered_username)
-            await thread.send(embed=embed)
+        try:
+            channel_id = get_linklog_channel(interaction.guild_id)
+            if not channel_id:
+                return
+            
+            channel = interaction.client.get_channel(channel_id)
+            if not channel:
+                return
+            
+            thread = channel.get_thread(int(self.thread_id))
+            if thread:
+                embed = create_access_log_embed(interaction.user, entered_username)
+                await thread.send(embed=embed)
+        except Exception as e:
+            print(f"Log error: {e}")
 
 class LinkButton(Button):
     def __init__(self, link_data: dict, thread_id: Optional[str]):
@@ -70,56 +69,65 @@ class LinkButton(Button):
         self.thread_id = thread_id
 
     async def callback(self, interaction: discord.Interaction):
-        if is_user_flagged(interaction.guild_id, interaction.user.id):
-            embed = create_flagged_embed()
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await self._log_flagged_attempt(interaction)
-            return
-        
-        if self.link_data.get("ask_username"):
-            modal = UsernameModal(self.link_data, self.thread_id)
-            await interaction.response.send_modal(modal)
-        else:
-            embed = create_access_embed(
-                link=self.link_data["link"],
-                password=self.link_data.get("password")
-            )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await self._log_access(interaction)
+        try:
+            if is_user_flagged(interaction.guild_id, interaction.user.id):
+                embed = create_flagged_embed()
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await self._log_flagged_attempt(interaction)
+                return
+            
+            if self.link_data.get("ask_username"):
+                modal = UsernameModal(self.link_data, self.thread_id)
+                await interaction.response.send_modal(modal)
+            else:
+                embed = create_access_embed(
+                    link=self.link_data["link"],
+                    password=self.link_data.get("password")
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                await self._log_access(interaction)
+        except Exception as e:
+            print(f"Button error: {e}")
 
     async def _log_access(self, interaction: discord.Interaction):
         if not self.thread_id:
             return
         
-        channel_id = get_linklog_channel(interaction.guild_id)
-        if not channel_id:
-            return
-        
-        channel = interaction.client.get_channel(channel_id)
-        if not channel:
-            return
-        
-        thread = channel.get_thread(int(self.thread_id))
-        if thread:
-            embed = create_access_log_embed(interaction.user)
-            await thread.send(embed=embed)
+        try:
+            channel_id = get_linklog_channel(interaction.guild_id)
+            if not channel_id:
+                return
+            
+            channel = interaction.client.get_channel(channel_id)
+            if not channel:
+                return
+            
+            thread = channel.get_thread(int(self.thread_id))
+            if thread:
+                embed = create_access_log_embed(interaction.user)
+                await thread.send(embed=embed)
+        except Exception as e:
+            print(f"Log error: {e}")
 
     async def _log_flagged_attempt(self, interaction: discord.Interaction):
         if not self.thread_id:
             return
         
-        channel_id = get_linklog_channel(interaction.guild_id)
-        if not channel_id:
-            return
-        
-        channel = interaction.client.get_channel(channel_id)
-        if not channel:
-            return
-        
-        thread = channel.get_thread(int(self.thread_id))
-        if thread:
-            embed = create_flagged_attempt_embed(interaction.user)
-            await thread.send(embed=embed)
+        try:
+            channel_id = get_linklog_channel(interaction.guild_id)
+            if not channel_id:
+                return
+            
+            channel = interaction.client.get_channel(channel_id)
+            if not channel:
+                return
+            
+            thread = channel.get_thread(int(self.thread_id))
+            if thread:
+                embed = create_flagged_attempt_embed(interaction.user)
+                await thread.send(embed=embed)
+        except Exception as e:
+            print(f"Log error: {e}")
 
 class LinkView(View):
     def __init__(self, link_data: dict, thread_id: Optional[str]):
