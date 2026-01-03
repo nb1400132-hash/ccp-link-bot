@@ -2,20 +2,20 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import re
+import asyncio
 import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.data import set_cooldown
-from utils.embeds import create_success_embed, create_error_embed
+from utils.embeds import create_error_embed
 
 class CooldownCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="cd", description="Set cooldown time for link access")
-    @app_commands.describe(time="Cooldown time (e.g., 30s for seconds, 2m for minutes). Max 4 minutes")
+    @app_commands.command(name="cd", description="Start a countdown timer")
+    @app_commands.describe(time="Countdown time (e.g., 30s for seconds, 2m for minutes). Max 4 minutes")
     @app_commands.default_permissions(administrator=True)
     async def cd(
         self,
@@ -37,41 +37,59 @@ class CooldownCommand(commands.Cog):
         
         if unit == "s":
             seconds = value
-            display_time = f"{value} second{'s' if value != 1 else ''}"
         else:
             seconds = value * 60
-            display_time = f"{value} minute{'s' if value != 1 else ''}"
         
         if seconds > 240:
             embed = create_error_embed(
-                title="Cooldown Too Long",
-                description="Maximum cooldown is 4 minutes.\n\nValid examples:\n- `240s` (4 minutes)\n- `4m` (4 minutes)"
+                title="Countdown Too Long",
+                description="Maximum countdown is 4 minutes.\n\nValid examples:\n- `240s` (4 minutes)\n- `4m` (4 minutes)"
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        if seconds < 0:
+        if seconds <= 0:
             embed = create_error_embed(
                 title="Invalid Value",
-                description="Cooldown must be a positive number."
+                description="Countdown must be a positive number."
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
         
-        set_cooldown(interaction.guild_id, seconds)
+        embed = self._create_countdown_embed(seconds)
+        await interaction.response.send_message(embed=embed)
+        message = await interaction.original_response()
         
-        if seconds == 0:
-            embed = create_success_embed(
-                title="Cooldown Disabled",
-                description="Link access cooldown has been disabled."
-            )
+        remaining = seconds
+        while remaining > 0:
+            await asyncio.sleep(1)
+            remaining -= 1
+            
+            if remaining > 0:
+                embed = self._create_countdown_embed(remaining)
+                await message.edit(embed=embed)
+        
+        final_embed = discord.Embed(
+            title="🇮🇱 !! THUG !! 🇮🇱",
+            color=0x5865F2
+        )
+        await message.edit(embed=final_embed)
+
+    def _create_countdown_embed(self, seconds: int) -> discord.Embed:
+        minutes = seconds // 60
+        secs = seconds % 60
+        
+        if minutes > 0:
+            time_display = f"{minutes}:{secs:02d}"
         else:
-            embed = create_success_embed(
-                title="Cooldown Set",
-                description=f"Link access cooldown has been set to **{display_time}**."
-            )
+            time_display = f"{secs}"
         
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        embed = discord.Embed(
+            title="Countdown",
+            description=f"# {time_display}",
+            color=0x5865F2
+        )
+        return embed
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(CooldownCommand(bot))
