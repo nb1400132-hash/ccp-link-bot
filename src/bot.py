@@ -16,16 +16,17 @@ bot = commands.Bot(
     help_command=None
 )
 
-COMMAND_EXTENSIONS = [
+EXTENSIONS = [
     "commands.link",
     "commands.linklog",
     "commands.cd",
     "commands.flag",
-    "commands.unflag"
+    "commands.unflag",
+    "events.link_filter"
 ]
 
 async def load_extensions():
-    for extension in COMMAND_EXTENSIONS:
+    for extension in EXTENSIONS:
         try:
             await bot.load_extension(extension)
             print(f"Loaded extension: {extension}")
